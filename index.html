@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Highra - Voice Assistant</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    #output {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+    button {
+      padding: 15px 30px;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      background-color: #4CAF50;
+      color: white;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+
+    
+
+  <h1>Highra - Your Voice Assistant</h1>
+  <p>Tap the button and speak to Highra!</p>
+  <button id="start-btn">Speak to Highra</button>
+  <div id="output"></div>
+
+  <script>
+    const startBtn = document.getElementById('start-btn');
+    const output = document.getElementById('output');
+
+    // Initialize speech recognition and synthesis
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'en-IN';
+    recognition.interimResults = false;
+
+    function getClassLocation(command) {
+  // Convert the command to lowercase for case-insensitive matching
+  const className = command.toLowerCase().match(/\d+[a-zA-Z]/);
+
+  // Log to check the extracted class name
+  console.log("Extracted class name:", className);
+
+  if (className) {
+    const locations = {
+      "1a": "Near the auditorium",
+      "1b": "Near the auditorium",
+      "2a": "Go straight to the notice board, slide left, take the stairs near the office to the Ground Floor. And your destination is on the left",
+      "2b": "Go straight to the notice board, slide left, take the stairs near the office to the Ground Floor. And your destination is on the right",
+      "3a": "Go straight to the notice board, slide left, take the stairs near the office to the Ground Floor, slide left. And then turn right and your destination is on the left",
+      "3b": "Go straight to the notice board, slide left, take the stairs near the office to the Ground Floor. And your destination is on the right",
+      "4a": "Go straight to the notice board, slide right, take the stairs next to the staff room to the Ground Floor take left, then right. And your destination is on the left",
+      "4b": "Go straight to the notice board, slide right, take the stairs next to the staff room to the Ground Floor take left, then right. And your destination is on the left",
+      "5a": "Go straight to the notice board, slide right, take the stairs next to the staff room to the Ground Floor. And your destination is on the left",
+      "5b": "Go straight to the notice board, slide right, take the stairs next to the staff room to the Ground Floor take left, then right. And in 2 meters, your destination is on the left",
+      "6a": "Go straight to the notice board, slide right, take the stairs next to the staff room to the Ground Floor take left, go through the exit and your destination is on the right",
+      "6b": "Go straight to the notice board, slide right, take the stairs next to the staff room to the Ground Floor take left, then right move further and take a right turn. and your destination is on the left",
+      "7a": "Go straight to the notice board, slide left, take the stairs near the office to the Ground Floor. and move to the exit destination is on the left",
+      "7b": "Go straight to the notice board, slide left, take the stairs near the office to the Ground Floor. and move to the exit destination is on the left",
+      "8a": "Go straight to the notice board, slide right, slide right next to the physics lab. and your destination is on the left",
+      "8b": "Go straight to the notice board, slide left and your destination is on the left",
+      "9a": "Go straight to the notice board, slide right, slide right next to the physics lab go straight. your destination will be on the right",
+      "9b": "Go straight to the notice board, slide right and your destination is next to the physics lab",
+      "10a": "Go straight to the notice board, slide left, and your destination is on the right",
+      "10b": "Go straight to the notice board, slide left, then take another left and you will reach your destination",
+      "11a": "Go straight to the notice board, slide left, then take another left and you will reach your destination",
+      "11b": "Move 20 meters straight from the school auditorium, slide right to the library, and your destination is on the right",
+      "12a": "Go straight to the notice board, slide right and move to the physics lab. You will reach your destination",
+      "12b": "Go straight to the notice board, slide left, and your destination is on the left"
+    };
+
+    const classLocation = locations[className[0]]; // Get the location from the map
+
+    // Log to check the matching location
+    console.log("Location found:", classLocation);
+
+    if (classLocation) {
+      return classLocation;
+    }
+  }
+
+  return "I couldn't find the location for that class.";
+}
+ return "I couldn't find the location for that class.";
+
+
+    function speak(text) {
+      const speech = new SpeechSynthesisUtterance(text);
+      speech.lang = 'en-IN';
+      window.speechSynthesis.speak(speech);
+    }
+
+    startBtn.addEventListener('click', () => {
+      recognition.start();
+      output.innerHTML = "Listening...";
+    });
+
+    recognition.onresult = (event) => {
+      const command = event.results[0][0].transcript.toLowerCase();
+      output.innerHTML = `You said: "${command}"`;
+
+      if (command.includes("principal") || command.includes("principle")) {
+        const principal = "Our current principal is Mrs. Vijayalaxmi S. Kaymal.";
+        output.innerHTML = principal;
+        speak(principal);
+
+      } else if (command.includes("vice principal")) {
+        const vicePrincipal = "The Vice Principal of our school is Mrs. Glaadys Arooja.";
+        output.innerHTML = vicePrincipal;
+        speak(vicePrincipal);
+
+      } else if (command.includes("who is the") && command.includes("teacher")) {
+        const subject = command.match(/who is the (.*) teacher/)[1].trim().toLowerCase();
+        const teachers = {
+          english: "Mrs. Betsy George, H O D of English; other teachers are Mrs. Twincy M Wilson, Mrs. Shibi B, and Mrs. Rejimol Antony.",
+          maths: "Mrs. M Mangalavathy, H O D of Mathematics; other teachers are Mrs. Merlin Rani, Mrs. Geetha, and Mrs. Surya S.",
+          science: "Mrs. Esther Jayanthy, H O D of Science; coordinators include Mrs. Anika Lamba Singh and Mrs. Ananthi P.",
+          humanities: "Mrs. Saramma M C, H O D of Humanities; other teachers include Mrs. Fousiya K H, Mrs. Hemapriya, and Mrs. Ronia K John.",
+          computer: "Mrs. Jincy M Nelson, H O D of Computer Science, and Mrs. Sheeja Varghese.",
+          tamil: "Mrs. P Carmel Mary and Mrs. P Sudha.",
+          malayalam: "Mr. M V Baiju, HOD of Languages and CCA Coordinator.",
+          yoga: "Mrs. Anuradha K.",
+          dance: "Mrs. Ambily Joseph.",
+          music: "Mr. Sabu M A and Mr. John Jeyapraksh.",
+          kg: "Teachers in KG include Mrs. Caroline Fernandez, Mrs. Nisha Mary Thomas, Mrs. Sigma Joseph, and Mrs. Lilli.",
+          art: "Mr. O T Remanan is our Art teacher.",
+          counselor: "Mrs. Juliet Abraham is the School Counselor in the Department of Psychology.",
+        };
+        const teacherInfo = teachers[subject] || "I'm not sure about the teacher for this subject.";
+        output.innerHTML = teacherInfo;
+        speak(teacherInfo);
+
+      } else if (command.includes("recent achievements")) {
+        const achievements = "Recently, our school won the inter-school science competition and achieved top results in sports events.";
+        output.innerHTML = achievements;
+        speak(achievements);
+
+      }  if (command.includes("school events") || command.includes("what is happening in school")) {
+        const eventDescription = "Today, we are excited to celebrate our Annual Day, themed around Science and Technology. This event highlights the incredible potential of our students as they showcase their innovative projects, demonstrating their creativity and understanding of scientific concepts. Throughout the day, we will feature esteemed guest speakers who will share valuable insights into recent advancements in the field and their impact on society. This is not just an opportunity to recognize our students hard work but also to inspire curiosity and a passion for discovery. Join us as we explore the transformative power of science and technology in shaping our future!";
+        output.innerHTML = eventDescription;
+        speak(eventDescription);
+        
+      } else if (command.includes("tell me about the school") || command.includes("what is the school about")) {
+        const schoolInfo = "Established in July 1985, the High Range School was conceived and set up primarily for the benefit of the children of Tata Global Beverages employees residing in and around Tea Valley, Munnar. The school embodies the Company's desire to help mould young minds of our children in the finest traditions of all round education, a matter of national concern. The School envisions equipping young students to face the challenges of pursuing excellence in different fields when they eventually move to centres of higher learning elsewhere. The School excels in academics and other activities having established innovations in teaching and learning process.";
+        output.innerHTML = schoolInfo;
+        speak(schoolInfo);
+
+      } else if (command.includes("where is") || command.includes("class")) {
+        const classLocation = getClassLocation(command);
+        if (classLocation) {
+          output.innerHTML = classLocation;
+          speak(classLocation);
+        } else {
+          output.innerHTML = "I couldn't find the location for that class.";
+          speak("I'm sorry, I couldn't find the location for that class.");
+        }
+
+      } else if (command.includes("bye") || command.includes("exit")) {
+        const goodbyeMessage = "Goodbye! Have a great day!";
+        output.innerHTML = goodbyeMessage;
+        speak(goodbyeMessage);
+        
+      } else if (command.includes("where is the school located")) {
+        const location = "Our school is located at 123 Learning Road, Knowledge City.";
+        output.innerHTML = location;
+        speak(location);
+
+      } else if (command.includes("how many students")) {
+        const studentCount = "Currently, we have around 1500 students enrolled.";
+        output.innerHTML = studentCount;
+        speak(studentCount);
+
+      } else if (command.includes("how many teachers are there")) {
+        const teacherCount = "Our school has 75 dedicated teachers.";
+        output.innerHTML = teacherCount;
+        speak(teacherCount);
+
+      }else if (command.includes("school events") || command.includes("what is happening in school")) {
+        const eventDescription = "Today, we are excited to celebrate our Annual Day, themed around Science and Technology. This event highlights the incredible potential of our students as they showcase their innovative projects, demonstrating their creativity and understanding of scientific concepts. Throughout the day, we will feature esteemed guest speakers who will share valuable insights into recent advancements in the field and their impact on society. This is not just an opportunity to recognize our students' hard work but also to inspire curiosity and a passion for discovery. Join us as we explore the transformative power of science and technology in shaping our future!";
+        output.innerHTML = teacherCount;
+        speak(teacherCount);
+      } 
+    };
+    
+
+    recognition.onerror = (event) => {
+      output.innerHTML = `Error: ${event.error}`;
+    };
+
+    recognition.onspeechend = () => {
+      recognition.stop();
+    };
+  </script>
+
+</body>
+</html>
